@@ -1,13 +1,37 @@
 import * as React from 'react';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import RootStackParamList from '../types/RootStackParamList';
-
+import {useDispatch, useSelector} from 'react-redux';
+import {loginUser} from '../Actions/User';
+import {AppDispatch} from '../Store';
+interface UserState {
+  isAuthenticated: boolean;
+  loading?: boolean;
+  error?: string | null;
+  user?: any;
+}
 const LoginScreen = ({
   navigation,
 }: NativeStackScreenProps<RootStackParamList, 'Login'>) => {
+  const dispatch: AppDispatch = useDispatch();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const {loading} = useSelector((state: UserState) => state.user);
+  const onLoginPress = () => {
+    if (loading) {
+      return;
+    }
+    dispatch(loginUser(email, password, navigation));
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to the app!</Text>
@@ -25,13 +49,11 @@ const LoginScreen = ({
           value={password}
           onChangeText={text => setPassword(text)}
         />
-        <Pressable
-          style={styles.button}
-          onPress={() => navigation.navigate('Home')}>
-          <Text>Login</Text>
+        <Pressable style={styles.button} onPress={onLoginPress}>
+          {loading ? <ActivityIndicator /> : <Text>Login</Text>}
         </Pressable>
         <View style={styles.linkContainer}>
-          <Text>Forgot Password?</Text>
+          <Text style={styles.linkText}>Forgot Password?</Text>
           <Text
             style={styles.link}
             onPress={() => navigation.navigate('ForgotPassword')}>
@@ -42,7 +64,7 @@ const LoginScreen = ({
       <View style={styles.lineBreak} />
 
       <View style={styles.linkContainer}>
-        <Text>Don't have an account?</Text>
+        <Text style={styles.linkText}>Don't have an account?</Text>
         <Text
           style={styles.link}
           onPress={() => navigation.navigate('Register')}>
@@ -58,17 +80,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f9c2ff',
+    backgroundColor: 'white',
     padding: 20,
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
+    color: 'black',
+    fontWeight: '800',
   },
   description: {
     fontSize: 18,
     color: '#333333',
     marginBottom: 60,
+    fontWeight: '500',
   },
 
   formContainer: {
@@ -108,6 +133,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textDecorationLine: 'underline',
     marginLeft: 10,
+  },
+
+  linkText: {
+    color: 'black',
+    fontWeight: 'bold',
   },
 });
 

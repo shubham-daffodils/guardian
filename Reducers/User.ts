@@ -1,11 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-
-interface UserState {
-  isAuthenticated: boolean;
-  loading?: boolean;
-  error?: string | null;
-  user?: any; // Replace 'any' with the actual user type if available
-}
+import UserState from '../types/UserState';
 
 const initialState: UserState = {
   isAuthenticated: false,
@@ -60,6 +54,10 @@ const userSlice = createSlice({
     ClearErrors(state) {
       state.error = null;
     },
+    ClearUser(state) {
+      state.user = null;
+      state.isAuthenticated = false;
+    },
   },
 });
 
@@ -75,6 +73,7 @@ export const {
   LoadUserFailure,
   LoadUserSuccess,
   ClearErrors,
+  ClearUser,
 } = userSlice.actions;
 
 export default userSlice.reducer;

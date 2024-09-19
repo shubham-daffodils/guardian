@@ -11,6 +11,7 @@ import {
   RegisterRequest,
   RegisterSuccess,
   RegisterFailure,
+  ClearUser,
 } from '../Reducers/User'; // Assuming these are imported from your user slice
 
 // Types for user details and error
@@ -18,20 +19,29 @@ interface User {
   name: string;
   email: string;
   password?: string;
-  token?: string;
+  token: string;
   expiresIn?: string;
 }
 
 interface ErrorResponse {
   message: string;
 }
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import RootStackParamList from '../types/RootStackParamList';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {Alert} from 'react-native';
+import ScreenList from '../ScreenList';
 // Login User
 export const loginUser =
-  (email: string, password: string) => async (dispatch: AppDispatch) => {
+  (
+    email: string,
+    password: string,
+    navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>,
+  ) =>
+  async (dispatch: AppDispatch) => {
     try {
       dispatch(LoginRequest());
-      console.log(email, password);
+      // console.log(email, password);
 
       const {data} = await axios.post<User>(
         `${server}/api/v1/login`,
@@ -43,62 +53,94 @@ export const loginUser =
         },
       );
 
-      // document.cookie = `token=${data.token}`;
+      await AsyncStorage.setItem('token', data?.token);
       dispatch(LoginSuccess(data));
+      navigation.navigate('Home');
     } catch (error: any) {
       const errorMessage =
         (error?.response?.data as ErrorResponse)?.message || 'Login failed';
-      // alert(errorMessage);
+      console.log(error);
+      Alert.alert('Error Loging In', errorMessage, [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]);
       dispatch(LoginFailure(errorMessage));
     }
   };
 
 // Load User
-export const loadUser = () => async (dispatch: AppDispatch) => {
-  try {
-    dispatch(LoadUserRequest());
+export const loadUser =
+  (navigation: NativeStackNavigationProp<RootStackParamList, 'Main'>) =>
+  async (dispatch: AppDispatch) => {
+    try {
+      dispatch(LoadUserRequest());
+      const token = await AsyncStorage.getItem('token');
+      console.log('Get Item', token);
+      const {data} = await axios.get<any>(`${server}/api/v1/me`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    const {data} = await axios.get<User>(`${server}/api/v1/me`, {
-      headers: {
-        'Content-Type': 'application/json',
-        // 'Authorization': `Bearer ${document.cookie.split('=')[1]}`
-      },
-    });
-
-    dispatch(LoadUserSuccess(data));
-  } catch (error: any) {
-    const errorMessage =
-      (error?.response?.data as ErrorResponse)?.message ||
-      'Failed to load user';
-    dispatch(LoadUserFailure(errorMessage));
-  }
-};
-
+      dispatch(LoadUserSuccess(data));
+    } catch (error: any) {
+      const errorMessage =
+        (error?.response?.data as ErrorResponse)?.message ||
+        'Failed to load user';
+      navigation.navigate('Login');
+      dispatch(LoadUserFailure(errorMessage));
+      Alert.alert('Error  Loading', errorMessage, [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]);
+      dispatch(LoginFailure(errorMessage));
+    }
+  };
+type ScreenNames = keyof typeof ScreenList;
 // Logout User
-export const logoutUser = () => async (dispatch: AppDispatch) => {
-  try {
-    await axios.get(`${server}/api/v1/logout`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+export const logoutUser =
+  (navigation: NativeStackNavigationProp<RootStackParamList, ScreenNames>) =>
+  async (dispatch: AppDispatch) => {
+    try {
+      await axios.get(`${server}/api/v1/logout`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    // document.cookie = `token=; expires=${new Date(Date.now())}; path=/;`;
-    // window.location.href = '/';
-    dispatch({type: 'Logout'});
-  } catch (error: any) {
-    const errorMessage =
-      (error?.response?.data as ErrorResponse)?.message || 'Logout failed';
-    dispatch({
-      type: 'Logout',
-      payload: errorMessage,
-    });
-  }
-};
+      // Remove the token without the callback
+      await AsyncStorage.removeItem('token')
+        .then(() => {
+          // Navigate to Login after token is removed
+          AsyncStorage.getItem('token').then(item => {
+            console.log('item', item);
+          });
+          dispatch(ClearUser());
+          navigation.navigate('Login');
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    } catch (error: any) {
+      const errorMessage =
+        (error?.response?.data as ErrorResponse)?.message || 'Logout failed';
+      Alert.alert('Error  Logging Out', errorMessage, [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]);
+      dispatch({
+        type: 'Logout',
+        payload: errorMessage,
+      });
+    }
+  };
 
 // Register User
 export const registerUser =
-  (name: string, email: string, password: string) =>
+  (
+    name: string,
+    email: string,
+    password: string,
+    navigation: NativeStackNavigationProp<RootStackParamList, 'Register'>,
+  ) =>
   async (dispatch: AppDispatch) => {
     try {
       dispatch(RegisterRequest());
@@ -113,15 +155,17 @@ export const registerUser =
           },
         },
       );
-
+      await AsyncStorage.setItem('token', data?.token);
+      navigation.navigate('Home');
       dispatch(RegisterSuccess(data));
-      // document.cookie = `token=${data.token}; expires=${new Date(data.expiresIn)}; path=/;`;
-      // window.location.href = '/';
     } catch (error: any) {
       const errorMessage =
         (error?.response?.data as ErrorResponse)?.message ||
         'Registration failed';
-      // alert(errorMessage);
+      console.log(errorMessage);
+      Alert.alert('Error  Registering', errorMessage, [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]);
       dispatch(RegisterFailure(errorMessage));
     }
   };

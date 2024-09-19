@@ -1,21 +1,23 @@
 import * as React from 'react';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
-import { Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
+import {Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
 import RootStackParamList from '../types/RootStackParamList';
 
-const ForgotPasswordScreen = ({
+const ResetPasswordScreen = ({
   navigation,
-}: NativeStackScreenProps<RootStackParamList, 'ForgotPassword'>) => {
+  // route,  // Add route to access parameters
+}: NativeStackScreenProps<RootStackParamList, 'ResetPassword'>) => {
+  // const { id } = route.params; // Extract id from route params
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Forgot Password?</Text>
-      <Text style={styles.description}>Enter Your Mail</Text>
+      <Text style={styles.title}>Reset Password</Text>
       <View style={styles.formContainer}>
-        <TextInput placeholder="Email" style={styles.input} />
+        <TextInput placeholder="New Password" style={styles.input} />
         <Pressable
           style={styles.button}
           onPress={() => navigation.navigate('Login')}>
-          <Text>Send Reset Mail</Text>
+          <Text>Submit</Text>
         </Pressable>
       </View>
     </View>
@@ -42,13 +44,11 @@ const styles = StyleSheet.create({
     marginBottom: 60,
     fontWeight: '500',
   },
-
   formContainer: {
     width: '100%',
     padding: 20,
     borderRadius: 10,
   },
-
   input: {
     backgroundColor: '#cccccc',
     padding: 10,
@@ -56,7 +56,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     color: 'black',
   },
-
   button: {
     backgroundColor: '#4CAF50',
     padding: 10,
@@ -65,5 +64,4 @@ const styles = StyleSheet.create({
   },
 });
 
-
-export default ForgotPasswordScreen;
+export default ResetPasswordScreen;

@@ -1,12 +1,18 @@
 const ScreenList = {
   Home: {
-    icon: 'hdd-o',
+    icon: 'home', // Updated to MaterialCommunityIcons
   },
   Profile: {
-    icon: 'male',
+    icon: 'account', // Updated to MaterialCommunityIcons
   },
   Activity: {
-    icon: 'youtube-play',
+    icon: 'play-circle', // Updated to MaterialCommunityIcons
+  },
+  AddPost: {
+    icon: 'plus-circle', // Updated to MaterialCommunityIcons
+  },
+  Search: {
+    icon: 'magnify', // Updated to MaterialCommunityIcons
   },
   Main: {
     icon: 'home',
@@ -20,6 +26,21 @@ const ScreenList = {
   ForgotPassword: {
     icon: 'hey',
   },
+  ResetPassword: {
+    icon: 'key',
+  },
+  Notification: {
+    icon: 'key',
+  },
+  Setting: {
+    icon: 'key',
+  },
+  Chat: {
+    icon: 'key',
+  },
+  Drawer : {
+    icon: 'key',
+  }
 };
 
 export default ScreenList;

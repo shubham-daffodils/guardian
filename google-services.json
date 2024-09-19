@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "33452672611",
+    "project_id": "gaurdian-d8edc",
+    "storage_bucket": "gaurdian-d8edc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:33452672611:android:40c091569e9cd442de5a56",
+        "android_client_info": {
+          "package_name": "com.infusion.guardian"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEdp951FZqpKAugphlWBB7h6oiZJ8ByAU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

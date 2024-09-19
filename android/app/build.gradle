@@ -76,6 +76,11 @@ android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
+    project.ext.vectoricons = [
+        iconFontNames: [ 'MaterialCommunityIcons.ttf' , 'Entypo.ttf'] // Add other fonts if necessary
+    ]
+
+    apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
     namespace "com.guardian"
     defaultConfig {
@@ -91,6 +96,12 @@ android {
             storePassword 'android'
             keyAlias 'androiddebugkey'
             keyPassword 'android'
+        }
+        release {
+            storeFile file('release-key.jks')
+            storePassword '23091974'
+            keyAlias 'release-key'
+            keyPassword '23091974'
         }
     }
     buildTypes {
