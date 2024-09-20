@@ -1,23 +1,32 @@
 import * as React from 'react';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {StyleSheet, View,TextInput} from 'react-native';
+import {StyleSheet, View, TextInput} from 'react-native';
 import RootStackParamList from '../types/RootStackParamList';
 // import {useSelector} from 'react-redux';
 // import UserState from '../types/UserState';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feeds from '../components/Feeds';
+import { darkTheme, lightTheme } from '../Styles/modeStyle';
+import { useSelector } from 'react-redux';
+import { RootState } from '../Store';
 
 const SearchScreen = ({}: // navigation,
 NativeStackScreenProps<RootStackParamList, 'Search'>) => {
-  // const {user} = useSelector((state: UserState) => state.user);
+  const {isDarkMode} = useSelector((state: RootState) => state.config);
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        ...styles.container,
+        backgroundColor: isDarkMode
+          ? darkTheme.background
+          : lightTheme.background,
+      }}>
       <View style={styles.searchContainer}>
         <Icon name="file-find" size={30} style={styles.searchIcon} />
         <TextInput placeholder="Search..." style={styles.searchInput} />
       </View>
       <View style={styles.feedContainer}>
-        <Feeds/>
+        <Feeds />
       </View>
     </View>
   );

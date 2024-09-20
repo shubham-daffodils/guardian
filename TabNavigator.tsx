@@ -1,6 +1,6 @@
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import RootStackParamList from './types/RootStackParamList';
-import {AppDispatch} from './Store';
+import {AppDispatch, RootState} from './Store';
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ScreenList from './ScreenList';
@@ -14,7 +14,8 @@ import SearchScreen from './screens/SearchScreen';
 import AddPostScreen from './screens/AddPostScreen';
 import {View, StyleSheet} from 'react-native';
 import CombinedNavigationProp from './types/CombinedNavigationProp';
-import {Pressable} from 'react-native';
+import CustomPressable from './components/CustomPressable';
+import {darkTheme, lightTheme} from './Styles/modeStyle';
 
 // Define a type that combines both stack and drawer navigation
 // Create a type for valid screen names
@@ -31,32 +32,47 @@ const renderTabBarIcon = (
 
 // DrawerButton component
 const DrawerButton = ({navigation}: CombinedNavigationProp<'Main'>) => {
+  const {isDarkMode} = useSelector((state: RootState) => state.config);
   return (
-    <Pressable
+    <CustomPressable
       onPress={() => navigation.openDrawer()} // Open drawer on button press
       style={styles.menuButton}>
-      <Icon name="menu" size={24} color="black" />
-    </Pressable>
+      <Icon
+        name="menu"
+        size={24}
+        color={isDarkMode ? darkTheme.text : lightTheme.text}
+      />
+    </CustomPressable>
   );
 };
 
 const NotificationButton = ({navigation}: CombinedNavigationProp<'Main'>) => {
+  const {isDarkMode} = useSelector((state: RootState) => state.config);
   return (
-    <Pressable
+    <CustomPressable
       onPress={() => navigation.navigate('Notification')} // Open drawer on button press
       style={styles.menuButton}>
-      <Icon name="bell" size={24} color="black" />
-    </Pressable>
+      <Icon
+        name="bell"
+        size={24}
+        color={isDarkMode ? darkTheme.text : lightTheme.text}
+      />
+    </CustomPressable>
   );
 };
 
 const ChatButton = ({navigation}: CombinedNavigationProp<'Main'>) => {
+  const {isDarkMode} = useSelector((state: RootState) => state.config);
   return (
-    <Pressable
+    <CustomPressable
       onPress={() => navigation.navigate('Chat')} // Open drawer on button press
       style={styles.menuButton}>
-      <Icon name="chat" size={24} color="black" />
-    </Pressable>
+      <Icon
+        name="chat"
+        size={24}
+        color={isDarkMode ? darkTheme.text : lightTheme.text}
+      />
+    </CustomPressable>
   );
 };
 
@@ -64,7 +80,8 @@ const ChatButton = ({navigation}: CombinedNavigationProp<'Main'>) => {
 const TabNavigator = ({navigation, route}: CombinedNavigationProp<'Main'>) => {
   const Tab = createBottomTabNavigator<RootStackParamList>();
   const dispatch: AppDispatch = useDispatch();
-
+  const {user} = useSelector((state: RootState) => state.user);
+  const {isDarkMode} = useSelector((state: RootState) => state.config);
   React.useEffect(() => {
     dispatch(loadUser(navigation));
   }, [dispatch, navigation]);
@@ -85,6 +102,19 @@ const TabNavigator = ({navigation, route}: CombinedNavigationProp<'Main'>) => {
               route as RouteProp<RootStackParamList, ScreenNames>,
               props,
             ),
+          tabBarStyle: {
+            backgroundColor: isDarkMode
+              ? darkTheme.background
+              : lightTheme.background,
+          },
+          headerStyle: {
+            backgroundColor: isDarkMode
+              ? darkTheme.background
+              : lightTheme.background,
+          },
+          headerTitleStyle: {
+            color: isDarkMode ? darkTheme.text : lightTheme.text,
+          },
         })}>
         <Tab.Screen
           name="Home"
@@ -134,6 +164,7 @@ const TabNavigator = ({navigation, route}: CombinedNavigationProp<'Main'>) => {
             headerLeft: () => (
               <DrawerButton navigation={navigation} route={route} />
             ),
+            title: user?.user?.email, // display user's name in the header
           }}
         />
       </Tab.Navigator>

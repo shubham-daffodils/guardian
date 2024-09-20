@@ -2,7 +2,6 @@ import * as React from 'react';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {
   ActivityIndicator,
-  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -10,9 +9,10 @@ import {
 } from 'react-native';
 import RootStackParamList from '../types/RootStackParamList';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch} from '../Store';
+import {AppDispatch, RootState} from '../Store';
 import {registerUser} from '../Actions/User';
-import UserState from '../types/UserState';
+import CustomPressable from '../components/CustomPressable';
+import {darkTheme, lightTheme} from '../Styles/modeStyle';
 
 const RegisterScreen = ({
   navigation,
@@ -21,18 +21,36 @@ const RegisterScreen = ({
   const [username, setUsername] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const {loading} = useSelector((state: UserState) => state.user);
+  const {loading} = useSelector((state: RootState) => state.user);
   const onRegisterPress = () => {
     if (loading) {
       return;
     }
     dispatch(registerUser(username, email, password, navigation));
   };
-
+  const {isDarkMode} = useSelector((state: RootState) => state.config);
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome to the app!</Text>
-      <Text style={styles.description}>Please Register!</Text>
+    <View
+      style={{
+        ...styles.container,
+        backgroundColor: isDarkMode
+          ? darkTheme.background
+          : lightTheme.background,
+      }}>
+      <Text
+        style={{
+          ...styles.title,
+          color: isDarkMode ? darkTheme.text : lightTheme.text,
+        }}>
+        Welcome to the app!
+      </Text>
+      <Text
+        style={{
+          ...styles.description,
+          color: isDarkMode ? darkTheme.text : lightTheme.text,
+        }}>
+        Please Register!
+      </Text>
       <View style={styles.formContainer}>
         <TextInput
           placeholder="Name"
@@ -52,14 +70,20 @@ const RegisterScreen = ({
           value={password}
           onChangeText={setPassword}
         />
-        <Pressable style={styles.button} onPress={onRegisterPress}>
+        <CustomPressable style={styles.button} onPress={onRegisterPress}>
           {loading ? <ActivityIndicator /> : <Text>Register</Text>}
-        </Pressable>
+        </CustomPressable>
       </View>
       <View style={styles.lineBreak} />
 
       <View style={styles.linkContainer}>
-        <Text style={styles.linkText}>Already have an account?</Text>
+        <Text
+          style={{
+            ...styles.linkText,
+            color: isDarkMode ? darkTheme.text : lightTheme.text,
+          }}>
+          Already have an account?
+        </Text>
         <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
           Login
         </Text>
@@ -73,7 +97,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
     padding: 20,
   },
   title: {

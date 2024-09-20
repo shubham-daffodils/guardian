@@ -3,14 +3,22 @@ import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {Button, StyleSheet, Text, View} from 'react-native';
 import RootStackParamList from '../types/RootStackParamList';
 import {useSelector} from 'react-redux';
-import UserState from '../types/UserState';
+import {RootState} from '../Store';
+import { darkTheme, lightTheme } from '../Styles/modeStyle';
 
 const AddPostScreen = ({
   navigation,
 }: NativeStackScreenProps<RootStackParamList, 'AddPost'>) => {
-  const {user} = useSelector((state: UserState) => state.user);
+  const {user} = useSelector((state: RootState) => state.user);
+  const {isDarkMode} = useSelector((state: RootState) => state.config);
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        ...styles.container,
+        backgroundColor: isDarkMode
+          ? darkTheme.background
+          : lightTheme.background,
+      }}>
       <Text style={styles.text}>New Post</Text>
       <Text style={styles.text}>Name: {user?.user?.name}</Text>
       <Text style={styles.text}>Email: {user?.user?.email}</Text>

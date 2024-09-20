@@ -1,22 +1,20 @@
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import FeedProps from '../types/FeedProps';
+import CustomPressable from './CustomPressable';
 const Feed = ({image, id}: FeedProps) => (
-  <View style={styles.item} key={id}>
+  <CustomPressable style={styles.item} key={id}>
     <View style={styles.imageContainer}>
       <Image source={{uri: image}} style={styles.image} resizeMode="cover" />
     </View>
-  </View>
+  </CustomPressable>
 );
 
 const styles = StyleSheet.create({
   item: {
     flex: 1,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#ccc',
-    borderTopColor: '#ccc',
-    borderTopWidth: 0.5,
-    paddingVertical: 5,
+    borderWidth:  1,
+    borderColor: 'transparent',
   },
 
   imageContainer: {
@@ -25,8 +23,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: '95%',
-    height: 150,
+    width: 125,
+    height: 160,
   },
 });
 

@@ -2,7 +2,6 @@ import * as React from 'react';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {
   ActivityIndicator,
-  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -11,20 +10,16 @@ import {
 import RootStackParamList from '../types/RootStackParamList';
 import {useDispatch, useSelector} from 'react-redux';
 import {loginUser} from '../Actions/User';
-import {AppDispatch} from '../Store';
-interface UserState {
-  isAuthenticated: boolean;
-  loading?: boolean;
-  error?: string | null;
-  user?: any;
-}
+import {AppDispatch, RootState} from '../Store';
+import CustomPressable from '../components/CustomPressable';
+import {darkTheme, lightTheme} from '../Styles/modeStyle';
 const LoginScreen = ({
   navigation,
 }: NativeStackScreenProps<RootStackParamList, 'Login'>) => {
   const dispatch: AppDispatch = useDispatch();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const {loading} = useSelector((state: UserState) => state.user);
+  const {loading} = useSelector((state: RootState) => state.user);
   const onLoginPress = () => {
     if (loading) {
       return;
@@ -32,10 +27,29 @@ const LoginScreen = ({
     dispatch(loginUser(email, password, navigation));
   };
 
+  const {isDarkMode} = useSelector((state: RootState) => state.config);
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome to the app!</Text>
-      <Text style={styles.description}>Please Login!</Text>
+    <View
+      style={{
+        ...styles.container,
+        backgroundColor: isDarkMode
+          ? darkTheme.background
+          : lightTheme.background,
+      }}>
+      <Text
+        style={{
+          ...styles.title,
+          color: isDarkMode ? darkTheme.text : lightTheme.text,
+        }}>
+        Welcome to the app!
+      </Text>
+      <Text
+        style={{
+          ...styles.description,
+          color: isDarkMode ? darkTheme.text : lightTheme.text,
+        }}>
+        Please Login!
+      </Text>
       <View style={styles.formContainer}>
         <TextInput
           placeholder="Email"
@@ -49,11 +63,17 @@ const LoginScreen = ({
           value={password}
           onChangeText={text => setPassword(text)}
         />
-        <Pressable style={styles.button} onPress={onLoginPress}>
+        <CustomPressable style={styles.button} onPress={onLoginPress}>
           {loading ? <ActivityIndicator /> : <Text>Login</Text>}
-        </Pressable>
+        </CustomPressable>
         <View style={styles.linkContainer}>
-          <Text style={styles.linkText}>Forgot Password?</Text>
+          <Text
+            style={{
+              ...styles.linkText,
+              color: isDarkMode ? darkTheme.text : lightTheme.text,
+            }}>
+            Forgot Password?
+          </Text>
           <Text
             style={styles.link}
             onPress={() => navigation.navigate('ForgotPassword')}>
@@ -64,7 +84,13 @@ const LoginScreen = ({
       <View style={styles.lineBreak} />
 
       <View style={styles.linkContainer}>
-        <Text style={styles.linkText}>Don't have an account?</Text>
+        <Text
+          style={{
+            ...styles.linkText,
+            color: isDarkMode ? darkTheme.text : lightTheme.text,
+          }}>
+          Don't have an account?
+        </Text>
         <Text
           style={styles.link}
           onPress={() => navigation.navigate('Register')}>
@@ -80,18 +106,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
     padding: 20,
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
-    color: 'black',
     fontWeight: '800',
   },
   description: {
     fontSize: 18,
-    color: '#333333',
     marginBottom: 60,
     fontWeight: '500',
   },
@@ -136,7 +159,6 @@ const styles = StyleSheet.create({
   },
 
   linkText: {
-    color: 'black',
     fontWeight: 'bold',
   },
 });

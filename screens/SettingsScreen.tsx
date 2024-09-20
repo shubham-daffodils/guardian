@@ -3,13 +3,20 @@ import {Button, StyleSheet, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import UserState from '../types/UserState';
 import CombinedNavigationProp from '../types/CombinedNavigationProp';
+import { RootState } from '../Store';
+import { darkTheme, lightTheme } from '../Styles/modeStyle';
 
-const SettingsScreen = ({
-  navigation,
-}: CombinedNavigationProp<'Setting'>) => {
+const SettingsScreen = ({navigation}: CombinedNavigationProp<'Setting'>) => {
   const {user} = useSelector((state: UserState) => state.user);
+  const {isDarkMode} = useSelector((state: RootState) => state.config);
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        ...styles.container,
+        backgroundColor: isDarkMode
+          ? darkTheme.background
+          : lightTheme.background,
+      }}>
       <Text style={styles.text}>Settings Screen</Text>
       <Text style={styles.text}>Name: {user?.user?.name}</Text>
       <Text style={styles.text}>Email: {user?.user?.email}</Text>

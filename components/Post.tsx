@@ -3,36 +3,74 @@ import {Image, StyleSheet, Text, View} from 'react-native';
 import PostProps from '../types/PostProps';
 import Icon from 'react-native-vector-icons/Entypo';
 import Profile from './Profile';
-import {Pressable} from 'react-native';
-const Post = ({desc, image, user, id}: PostProps) => (
-  <View style={styles.item} key={id}>
-    <View style={styles.itemHeader}>
-      <Profile title={user} avatar={image} id={id} hideTitle={true} size={30} />
-      <Text style={styles.username}>{user}</Text>
-      <Pressable>
-        <Icon name="dots-three-vertical" size={20} style={styles.icon} />
-      </Pressable>
+import CustomPressable from './CustomPressable';
+import { useSelector } from 'react-redux';
+import { RootState } from '../Store';
+import { darkTheme, lightTheme } from '../Styles/modeStyle';
+const Post = ({desc, image, user, id}: PostProps) => {
+  const {isDarkMode}  = useSelector((state : RootState)  => state.config);
+  return (
+    <View style={styles.item} key={id}>
+      <View style={styles.itemHeader}>
+        <Profile
+          title={user}
+          avatar={image}
+          id={id}
+          hideTitle={true}
+          size={35}
+        />
+        <Text
+          style={{
+            ...styles.username,
+            color: !isDarkMode ? lightTheme.text  : darkTheme.text,
+          }}>
+          {user}
+        </Text>
+        <CustomPressable>
+          <Icon
+            name="dots-three-vertical"
+            size={20}
+            style={styles.icon}
+          />
+        </CustomPressable>
+      </View>
+      <View style={styles.imageContainer}>
+        <Image source={{uri: image}} style={styles.image} resizeMode="cover" />
+      </View>
+      <View style={styles.actionButtons}>
+        <CustomPressable>
+          <Icon
+            name="heart-outlined"
+            size={30}
+            style={styles.actionIcon}
+          />
+        </CustomPressable>
+        <CustomPressable>
+          <Icon
+            name="message"
+            size={30}
+            style={styles.actionIcon}
+          />
+        </CustomPressable>
+        <CustomPressable>
+          <Icon
+            name="paper-plane"
+            size={30}
+            style={styles.actionIcon}
+          />
+        </CustomPressable>
+        <CustomPressable style={{marginLeft: 'auto'}}>
+          <Icon
+            name="bookmark"
+            size={30}
+            style={styles.actionIcon}
+          />
+        </CustomPressable>
+      </View>
+      <Text style={styles.desc}>{desc}</Text>
     </View>
-    <View style={styles.imageContainer}>
-      <Image source={{uri: image}} style={styles.image} resizeMode="cover" />
-    </View>
-    <View style={styles.actionButtons}>
-      <Pressable>
-        <Icon name="heart-outlined" size={30} style={styles.actionIcon} />
-      </Pressable>
-      <Pressable>
-        <Icon name="message" size={30} style={styles.actionIcon} />
-      </Pressable>
-      <Pressable>
-        <Icon name="paper-plane" size={30} style={styles.actionIcon} />
-      </Pressable>
-      <Pressable style={{marginLeft: 'auto'}}>
-        <Icon name="bookmark" size={30} style={styles.actionIcon} />
-      </Pressable>
-    </View>
-    <Text style={styles.desc}>{desc}</Text>
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   item: {

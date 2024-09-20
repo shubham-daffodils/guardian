@@ -1,39 +1,48 @@
 import * as React from 'react';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import RootStackParamList from '../types/RootStackParamList';
 import {useSelector} from 'react-redux';
-// import {AppDispatch} from '../Store';
-import UserState from '../types/UserState';
-// import Stories from '../components/Stories';
 import Posts from '../components/Posts';
+import {RootState} from '../Store';
+import {darkTheme, lightTheme} from '../Styles/modeStyle';
 
 const HomeScreen = ({}: // navigation,
 NativeStackScreenProps<RootStackParamList, 'Home'>) => {
-  const {user, loading} = useSelector((state: UserState) => state.user);
-  // const dispatch: AppDispatch = useDispatch();
-
+  const {user, loading} = useSelector((state: RootState) => state.user);
+  const {isDarkMode} = useSelector((state: RootState) => state.config);
   console.log('user', user);
   return loading ? (
-    <View style={styles.container}>
-      <Text style={styles.text}>Loading</Text>
+    <View
+      style={{
+        ...styles.loadcontainer,
+        backgroundColor: isDarkMode
+          ? darkTheme.background
+          : lightTheme.background,
+      }}>
+      <ActivityIndicator size={40} />
     </View>
   ) : (
-    <View style={styles.container}>
-      {/* <Stories /> */}
+    <View
+      style={{
+        ...styles.container,
+        backgroundColor: isDarkMode
+          ? darkTheme.background
+          : lightTheme.background,
+      }}>
       <Posts />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  loadcontainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
-  },
-  text: {
-    fontSize: 20,
-    marginBottom: 20,
-    color: 'black',
   },
 });
 
